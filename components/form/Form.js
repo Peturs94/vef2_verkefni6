@@ -26,7 +26,9 @@ export default function Form(props) {
 
   return (
     <form className={css.form} onSubmit={onSubmit}>
-
+      <h2 className={css.form__header}>Nýtt Verkefni</h2>
+      <label>Titill:</label><input></input>
+      <label>Klárast fyrir:</label><input type="datetime-local"></input>
     </form>
   )
 }

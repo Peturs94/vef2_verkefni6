@@ -1,3 +1,8 @@
+import 'isomorphic-fetch';
+
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
+const { apiUrl } = publicRuntimeConfig;
 /* todo isomorphic-fetch og útfæra köll í vefþjónustu með slóð úr config */
 
 export async function deleteTodo(id) {
@@ -5,7 +10,20 @@ export async function deleteTodo(id) {
 }
 
 export async function addTodo(title, due) {
-  /* todo */
+  const options = {
+    body: JSON.stringify({
+      title,
+      due,
+    }),
+    headers: {
+      'content-type': 'application/json',
+    },
+    method: 'POST',
+  };
+
+  const url = new URL('/', apiUrl);
+  const response = await fetch(url.href, options);
+
 }
 
 export async function updateTodo(id, { title, completed, due } = {}) {
@@ -13,9 +31,22 @@ export async function updateTodo(id, { title, completed, due } = {}) {
 }
 
 export async function getTodos(hideCompleted = undefined) {
-  /* todo */
+
+  const completed = hideCompleted ? false : true;
+
+  const url = new URL('/?completed=${completed}', apiUrl);
+  const response = await fetch(url.href);
+  const result = await response.json();
+
+  return {
+    success: response.ok,
+    result
+  }
 }
 
 export async function getTodo(id) {
-  /* todo */
+  const toDo = await getTodos();
+  const foundTodo = toDo.result.find(i => i.id === Number(id));
+
+  return foundTodo;
 }
