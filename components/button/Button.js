@@ -13,6 +13,11 @@ export default function Button(props) {
   );
 }
 
+Button.propTypes = {
+  children: PropTypes.any,
+  onClick: PropTypes.func,
+}
+
 Error.propTypes = {
   onClick: PropTypes.func,
 };

@@ -1,52 +1,92 @@
 import 'isomorphic-fetch';
-
 import getConfig from 'next/config';
+
 const { publicRuntimeConfig } = getConfig();
 const { apiUrl } = publicRuntimeConfig;
 /* todo isomorphic-fetch og útfæra köll í vefþjónustu með slóð úr config */
 
 export async function deleteTodo(id) {
-  /* todo */
+  const url = new URL(`/${id}`, apiUrl);
+  response = await sendData(url.href, {}, 'DELETE');
+
+  if (!response.ok) return false;
+  return true;
 }
 
-export async function addTodo(title, due) {
-  const options = {
-    body: JSON.stringify({
-      title,
-      due,
-    }),
+export async function sendData(url, data, method = 'POST') {
+  var response = await fetch(url, {
+    method: method,
     headers: {
-      'content-type': 'application/json',
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
     },
-    method: 'POST',
-  };
+    body: JSON.stringify(data)
+  });
+
+  return response;
+}
+
+/**
+ * fjarlægir lykla með tóm gildi úr objecti
+ * @param {Object} object 
+ */
+function filterOutEmptyValues(object) {
+  const objectToReturn = object;
+  Object.keys(objectToReturn).forEach((key) => {
+    if (objectToReturn[key] === null || objectToReturn[key] === undefined || objectToReturn[key] === '') {
+      delete objectToReturn[key];
+    }
+  });
+  
+  return objectToReturn;
+}
+
+export async function addTodo(title, due = null) {
+  const obj = { title, due };
+  const filteredObj = filterOutEmptyValues(obj);
 
   const url = new URL('/', apiUrl);
-  const response = await fetch(url.href, options);
+  const response = await sendData(url.href, filteredObj);
 
+  const json = await response.json();
+  const errors = 'field' in json || 'field' in json[0];
+
+  return { json, errors };
 }
 
 export async function updateTodo(id, { title, completed, due } = {}) {
-  /* todo */
+  const obj = { title, completed, due };
+  const filteredObj = filterOutEmptyValues(obj);
+
+  console.info(filteredObj);
+
+  const url = new URL(`/${id}`, apiUrl);
+  const response = await sendData(url.href, filteredObj, 'PATCH');
+
+  const json = await response.json();
+  const errors = 'field' in json || 'field' in json[0];
+  return { json, errors };
 }
 
 export async function getTodos(hideCompleted = undefined) {
+  let path = '/';
+  if (hideCompleted) path += '?completed=false';
+  const url = new URL(path, apiUrl);
+  const response = await fetch(url.href); // eslint-disable-line
 
-  const completed = hideCompleted ? false : true;
-
-  const url = new URL('/?completed=${completed}', apiUrl);
-  const response = await fetch(url.href);
-  const result = await response.json();
-
-  return {
-    success: response.ok,
-    result
+  if (!response.ok) {
+    return null;
   }
+
+  return response.json();
 }
 
 export async function getTodo(id) {
-  const toDo = await getTodos();
-  const foundTodo = toDo.result.find(i => i.id === Number(id));
+  const url = new URL(`${id}`, apiUrl);
+  const response = await fetch(url.href);
 
-  return foundTodo;
+  if (response.ok) {
+    return null;
+  }
+  return response.json();
 }

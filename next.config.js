@@ -9,6 +9,6 @@ module.exports = withCSS({
     localIdentName: "[local]___[hash:base64:5]",
   },
   publicRuntimeConfig: {
-      apiUrl: 'http://localhost:5000'
+      apiUrl: process.env.API_URL,
     }
   });

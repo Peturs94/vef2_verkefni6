@@ -1,34 +1,29 @@
-import React, { useState } from 'react';
-
-import { addTodo } from '../../api';
-
-import Button from '../button/Button';
-import Field from '../field/Field';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Errors from '../errors/Errors';
 
 import css from './Form.css';
 
 // Form á forsíðu
 export default function Form(props) {
-  const { onCreated } = props;
+  const { children, errors, callback } = props;
 
-  const [data, setData] = useState({ title: '', date: undefined });
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState([]);
 
   async function onSubmit(e) {
-
-  }
-
-  function onChange(e) {
-
+    e.preventDefault();
+    await callback(e.target);
   }
 
   return (
     <form className={css.form} onSubmit={onSubmit}>
-      <h2 className={css.form__header}>Nýtt Verkefni</h2>
-      <label>Titill:</label><input></input>
-      <label>Klárast fyrir:</label><input type="datetime-local"></input>
+      {children}
+      <Errors errors={errors} />
     </form>
   )
+}
+
+Form.propTypes = {
+  children: PropTypes.any,
+  errors: PropTypes.array,
+  callback: PropTypes.func,
 }
