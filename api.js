@@ -7,14 +7,14 @@ const { apiUrl } = publicRuntimeConfig;
 
 export async function deleteTodo(id) {
   const url = new URL(`/${id}`, apiUrl);
-  response = await sendData(url.href, {}, 'DELETE');
+  response = await sendData(url.href, {}, 'DELETE');// eslint-disable-line
 
-  if (!response.ok) return false;
+  if (!response.ok) return false; // eslint-disable-line
   return true;
 }
 
 export async function sendData(url, data, method = 'POST') {
-  var response = await fetch(url, {
+  var response = await fetch(url, { // eslint-disable-line
     method: method,
     headers: {
       'Accept': 'application/json',
@@ -83,7 +83,7 @@ export async function getTodos(hideCompleted = undefined) {
 
 export async function getTodo(id) {
   const url = new URL(`${id}`, apiUrl);
-  const response = await fetch(url.href);
+  const response = await fetch(url.href); // eslint-disable-line
 
   if (response.ok) {
     return null;

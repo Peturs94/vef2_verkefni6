@@ -4,7 +4,7 @@ import Link from 'next/link';
 import css from './TodoItem.css';
 
 export default function todoItem(props) {
-  const { loading, updatedId, todo, changeTodoStatus, id } = props;
+  const { loading, updatedId, todo, changeTodoStatus, id } = props; // eslint-disable-line
   const linkAs = `/todo/${id}`;
   const linkHref = `todo?id=${id}`;
 
